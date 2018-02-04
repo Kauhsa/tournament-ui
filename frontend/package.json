@@ -5,6 +5,7 @@
   "dependencies": {
     "axios": "^0.17.1",
     "css-wipe": "^4.3.0",
+    "express-promise-router": "^3.0.1",
     "immutable": "v4.0.0-rc.9",
     "lodash-es": "^4.17.4",
     "react": "^16.2.0",

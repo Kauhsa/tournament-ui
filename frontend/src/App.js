@@ -26,11 +26,13 @@ class App extends React.PureComponent {
 
   render() {
     const { tournamentState } = this.state;
+    const params = new URLSearchParams(new URL(window.location).search);
+    const url = `${backend.websocketUrl}?tournamentId=${params.get("tournamentId")}`;
 
     return (
       <Container>
         {tournamentState && <Tournament tournamentState={tournamentState} />}
-        <Websocket url={backend.websocketUrl} onMessage={this.updateTournamentState} />
+        <Websocket url={url} onMessage={this.updateTournamentState} />
       </Container>
     );
   }

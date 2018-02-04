@@ -1,0 +1,28 @@
+version: '3'
+services:
+  frontend:
+    image: 'node:8-alpine'
+    volumes:
+      - frontend_modules:/app/node_modules
+      - ./frontend:/app
+    ports:
+     - '3000:3000'
+    command: "ash -c 'cd /app && yarn && yarn start'"
+
+  backend:
+    image: 'node:8-alpine'
+    volumes:
+      - backend_modules:/app/node_modules
+      - ./backend:/app
+    environment:
+      MONGO_URL: 'mongodb://mongo/tournament'
+    ports:
+      - '8080:8080'
+    command: "ash -c 'cd /app && yarn && yarn start'"
+
+  mongo:
+    image: mongo
+
+volumes:
+  frontend_modules:
+  backend_modules:
