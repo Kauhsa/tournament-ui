@@ -68,12 +68,6 @@ const PlayerScore = styled.div`
   padding: 0.33rem 0;
 `;
 
-const ResetButton = styled.button`
-  position: fixed;
-  bottom: 1rem;
-  right: 1rem;
-`;
-
 export default class Tournament extends React.PureComponent {
   state = {
     openMatch: null
@@ -102,13 +96,9 @@ export default class Tournament extends React.PureComponent {
 
   handleSubmitScores = scores => {
     backend
-      .submitScores(this.state.openMatchId, scores)
+      .submitScores(this.props.id, this.state.openMatchId, scores)
       .then(() => this.setState({ openMatchId: null }))
       .catch(e => alert(e.response.data));
-  };
-
-  handleReset = () => {
-    backend.reset();
   };
 
   getPlayersAndScores = match => {
@@ -143,8 +133,6 @@ export default class Tournament extends React.PureComponent {
             ))}
           </Matches>
         ))}
-
-        <ResetButton onClick={this.handleReset}>Reset</ResetButton>
 
         <Modal
           isOpen={!!openMatch}
