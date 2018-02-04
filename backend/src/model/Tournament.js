@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const tournamentSchema = mongoose.Schema({
   players: [String],
-  state: Object,
+  states: Array,
   options: {
     sizes: [Number],
     advancers: [Number]

@@ -19,12 +19,16 @@ mongoose.connect(process.env.MONGO_URL);
 
 const getTournament = async id => {
   const tournament = await Tournament.findById(id);
-  return FFA.restore(tournament.players.length, tournament.options, tournament.state);
+  return FFA.restore(
+    tournament.players.length,
+    tournament.options,
+    tournament.states[tournament.states.length - 1]
+  );
 };
 
 const saveTournament = async (id, ffaTournament) => {
   const tournament = await Tournament.findById(id);
-  tournament.state = ffaTournament.state.slice();
+  tournament.states.push(ffaTournament.state.slice());
   await tournament.save();
 };
 
@@ -33,7 +37,7 @@ const getTournamentState = async id => {
   const ffaTournament = FFA.restore(
     tournament.players.length,
     tournament.options,
-    tournament.state
+    tournament.states[tournament.states.length - 1]
   );
 
   return {
@@ -69,7 +73,7 @@ router.post("/tournaments", async (req, res) => {
   const tournament = await Tournament.create({
     players: players,
     options: options,
-    state: ffaTournament.state.slice()
+    states: [ffaTournament.state.slice()]
   });
 
   res.json({
