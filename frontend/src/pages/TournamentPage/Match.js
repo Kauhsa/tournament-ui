@@ -2,16 +2,24 @@ import React from "react";
 import styled from "styled-components";
 import { set } from "immutable";
 
+import backend from "../../services/backend";
 import { getMatchTitle, getPlayerName } from "../../utils/tournamentUtils";
+import * as MatchStates from "../../utils/matchStates";
 
 const Player = styled.div`
   margin-bottom: 1rem;
-
-  input {
-    width: 100%;
-    margin-top: 0.25rem;
-  }
 `;
+
+export const NewMatch = ({ match, tournamentState, onStartSongSelection }) => {
+  return (
+    <div>
+      {match.p.map((playerId, index) => (
+        <Player key={index}>{getPlayerName(playerId, tournamentState)}</Player>
+      ))}
+      <button onClick={onStartSongSelection}>Start song selection</button>
+    </div>
+  );
+};
 
 export default class Match extends React.PureComponent {
   constructor(props) {
@@ -21,33 +29,38 @@ export default class Match extends React.PureComponent {
     };
   }
 
-  handleSubmit = () => {
-    this.props.onSubmitScores(this.state.scores.map(x => parseInt(x, 10)));
+  handleStartSongSelection = () => {
+    const { tournamentState, match } = this.props;
+    backend.startSongSelection(tournamentState.id, match.id);
+  };
+
+  /*handleSubmitScores = scores => {
+    backend
+      .submitScores(this.props.id, this.state.openMatchId, scores)
+      .catch(e => alert(e.response.data));
+  };*/
+
+  renderMatch = () => {
+    if (this.props.match.data.state === MatchStates.MATCH_NOT_STARTED) {
+      return (
+        <NewMatch
+          match={this.props.match}
+          tournamentState={this.props.tournamentState}
+          onStartSongSelection={this.handleStartSongSelection}
+        />
+      );
+    } else {
+      return <p>lol</p>;
+    }
   };
 
   render() {
-    const { match, tournamentState } = this.props;
+    const { match } = this.props;
 
     return (
       <div>
         <h1>{getMatchTitle(match)}</h1>
-
-        {match.p.map((playerId, index) => (
-          <Player key={index}>
-            <label>
-              <div>{getPlayerName(playerId, tournamentState)}</div>
-              <input
-                type="number"
-                value={this.state.scores[index]}
-                onChange={e => {
-                  this.setState({ scores: set(this.state.scores, index, e.target.value) });
-                }}
-              />
-            </label>
-          </Player>
-        ))}
-
-        <button onClick={this.handleSubmit}>Save scores</button>
+        {this.renderMatch()}
       </div>
     );
   }

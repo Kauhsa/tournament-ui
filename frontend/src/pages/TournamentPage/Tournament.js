@@ -21,13 +21,6 @@ export default class Tournament extends React.PureComponent {
     this.setState({ openMatchId: null });
   };
 
-  handleSubmitScores = scores => {
-    backend
-      .submitScores(this.props.id, this.state.openMatchId, scores)
-      .then(() => this.setState({ openMatchId: null }))
-      .catch(e => alert(e.response.data));
-  };
-
   render() {
     const { tournamentState } = this.props;
     const openMatch = this.getOpenMatch();
@@ -43,13 +36,7 @@ export default class Tournament extends React.PureComponent {
           onRequestClose={this.handleCloseMatchModal}
           contentLabel="Match"
         >
-          {openMatch && (
-            <Match
-              match={openMatch}
-              tournamentState={tournamentState}
-              onSubmitScores={this.handleSubmitScores}
-            />
-          )}
+          {openMatch && <Match match={openMatch} tournamentState={tournamentState} />}
         </Modal>
       </div>
     );

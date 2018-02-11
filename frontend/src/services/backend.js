@@ -11,6 +11,10 @@ export default {
       .then(response => response.data);
   },
 
+  startSongSelection(tournamentId, matchId) {
+    return backend.post(`/tournaments/${tournamentId}/matches/${matchId}/startSongSelection`);
+  },
+
   createTournament(data) {
     return backend.post("/tournaments", data).then(response => response.data);
   },

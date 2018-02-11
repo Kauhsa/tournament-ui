@@ -1,5 +1,4 @@
 import React from "react";
-import styled from "styled-components";
 import { withFormik } from "formik";
 
 import backend from "../services/backend";

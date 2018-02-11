@@ -67,11 +67,12 @@ const PlayerScore = styled.div`
 `;
 
 export default class TournamentOverview extends React.PureComponent {
-  getMatchesByRound = () =>
-    sortBy(
-      Object.entries(groupBy(this.props.tournamentState.matches, match => match.id.r)),
-      ([k, v]) => k
-    ).map(([k, v]) => v);
+  getMatchesByRound = () => {
+    const matchesByRound = groupBy(this.props.tournamentState.matches, match => match.roundNumber);
+
+    // lol
+    return sortBy(Object.entries(matchesByRound), ([k, v]) => k).map(([k, v]) => v);
+  };
 
   getPlayersAndScores = match => {
     if (!match.m) {
@@ -96,7 +97,9 @@ export default class TournamentOverview extends React.PureComponent {
                   {this.getPlayersAndScores(match).map(([player, score], i) => (
                     <Player
                       key={i}
-                      lastAdvancingPlayer={i === tournamentState.advancers[match.id.r - 1] - 1}
+                      lastAdvancingPlayer={
+                        i === tournamentState.advancers[match.roundNumber - 1] - 1
+                      }
                     >
                       <PlayerName>{getPlayerName(player, tournamentState)}</PlayerName>
                       <PlayerScore>{score}</PlayerScore>

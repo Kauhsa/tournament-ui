@@ -22,14 +22,13 @@ class TournamentPage extends React.PureComponent {
 
   render() {
     const { match } = this.props;
-    const tournamentId = match.params.tournamentId;
-    const url = `${backend.websocketUrl}?tournamentId=${tournamentId}`;
+    const url = `${backend.websocketUrl}?tournamentId=${match.params.tournamentId}`;
     const { tournamentState } = this.state;
 
     return (
       <Container>
-        {tournamentState && <Tournament id={tournamentId} tournamentState={tournamentState} />}
         <Websocket url={url} onMessage={this.updateTournamentState} />
+        {tournamentState && <Tournament tournamentState={tournamentState} />}
       </Container>
     );
   }

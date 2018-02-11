@@ -3,17 +3,14 @@ import faker from "faker";
 import { times, sample, uniq, random, shuffle } from "lodash";
 
 import Tournament from "../model/Tournament";
+import * as MatchStates from "../utils/matchStates";
+import { serializeMatchId, deserializeMatchId } from "../utils/tournamentUtils";
+import { broadcastTournamentState } from "./broadcast";
 
 const SONGS = times(100, () => ({
   name: faker.commerce.productName(),
   rating: random(9, 12)
 }));
-
-// match states
-const MATCH_NOT_STARTED = "MATCH_NOT_STARTED";
-const MATCH_IN_SONG_SELECTION = "MATCH_IN_SONG_SELECTION";
-const MATCH_IN_SCORE_ENTRY = "MATCH_IN_SCORE_ENTRY";
-const MATCH_SCORED = "MATCH_SCORED";
 
 const saveTournament = async (id, ffaTournament) => {
   const tournament = await Tournament.findById(id);
@@ -51,12 +48,12 @@ export const startSongSelection = async (tournamentId, matchId) => {
   const tournament = await Tournament.findById(tournamentId);
   const ffaTournament = restoreTournament(tournament);
 
-  const match = ffaTournament.findMatch(matchId);
+  const match = ffaTournament.findMatch(deserializeMatchId(matchId));
 
-  if (match.data.state === MATCH_NOT_STARTED) {
-    match.data.state = MATCH_IN_SONG_SELECTION;
+  if (match.data.state === MatchStates.MATCH_NOT_STARTED) {
+    match.data.state = MatchStates.MATCH_IN_SONG_SELECTION;
     match.data.songs = getInitialSongPool(SONGS);
-    saveTournament(tournamentId, ffaTournament);
+    await saveTournament(tournamentId, ffaTournament);
   } else {
     throw new Error("Invalid state nub");
   }
@@ -75,7 +72,7 @@ export const createTournament = async ({ name, players, sizes, advancers }) => {
   ffaTournament.matches.forEach(
     match =>
       (match.data = {
-        state: MATCH_NOT_STARTED
+        state: MatchStates.MATCH_NOT_STARTED
       })
   );
 
@@ -97,13 +94,14 @@ export const getTournaments = async () => {
 export const addScore = async (tournamentId, matchId, score) => {
   const tournament = await Tournament.findById(tournamentId);
   const ffaTournament = restoreTournament(tournament);
+  const deserializedMatchId = deserializeMatchId(matchId);
 
-  const reason = ffaTournament.unscorable(matchId, score);
+  const reason = ffaTournament.unscorable(deserializedMatchId, score);
   if (reason !== null) {
     throw new Error(reason);
   }
 
-  ffaTournament.score(matchId, score);
+  ffaTournament.score(deserializedMatchId, score);
   await saveTournament(tournamentId, ffaTournament);
 };
 
@@ -112,7 +110,13 @@ export const getTournamentState = async id => {
   const ffaTournament = restoreTournament(tournament);
 
   return {
-    matches: ffaTournament.matches,
+    id: tournament._id,
+    matches: ffaTournament.matches.map(match => ({
+      ...match,
+      id: serializeMatchId(match.id),
+      roundNumber: match.id.r,
+      matchNumber: match.id.m
+    })),
     advancers: ffaTournament.advs,
     playerNames: tournament.players
   };
