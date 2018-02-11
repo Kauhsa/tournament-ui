@@ -2,8 +2,8 @@ import React from "react";
 import Websocket from "react-websocket";
 import styled from "styled-components";
 
-import backend from "../services/backend";
-import Tournament from "../components/Tournament";
+import backend from "../../services/backend";
+import Tournament from "./Tournament";
 
 const Container = styled.div`
   width: 100%;
@@ -19,10 +19,6 @@ class TournamentPage extends React.PureComponent {
   updateTournamentState = msg => {
     this.setState({ tournamentState: JSON.parse(msg) });
   };
-
-  handleMatchClick = () => {};
-
-  handleScoreMatch = (matchId, scores) => {};
 
   render() {
     const { match } = this.props;

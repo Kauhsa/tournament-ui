@@ -2,6 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import { set } from "immutable";
 
+import { getMatchTitle, getPlayerName } from "../../utils/tournamentUtils";
+
 const Player = styled.div`
   margin-bottom: 1rem;
 
@@ -11,7 +13,7 @@ const Player = styled.div`
   }
 `;
 
-export default class MatchForm extends React.PureComponent {
+export default class Match extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -24,18 +26,16 @@ export default class MatchForm extends React.PureComponent {
   };
 
   render() {
-    const { match, playerNames } = this.props;
+    const { match, tournamentState } = this.props;
 
     return (
       <div>
-        <h1>
-          Round {match.id.r}, Match {match.id.m}
-        </h1>
+        <h1>{getMatchTitle(match)}</h1>
 
         {match.p.map((playerId, index) => (
           <Player key={index}>
             <label>
-              <div>{playerNames[playerId - 1]}</div>
+              <div>{getPlayerName(playerId, tournamentState)}</div>
               <input
                 type="number"
                 value={this.state.scores[index]}

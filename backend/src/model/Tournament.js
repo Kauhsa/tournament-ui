@@ -3,11 +3,17 @@ import mongoose from "mongoose";
 const tournamentSchema = mongoose.Schema({
   name: String,
   players: [String],
-  states: Array,
+  states: [
+    {
+      state: Object,
+      metadata: Object
+    }
+  ],
   options: {
     sizes: [Number],
     advancers: [Number]
-  }
+  },
+  activeMatchId: Object
 });
 
 tournamentSchema.method("dto", function() {

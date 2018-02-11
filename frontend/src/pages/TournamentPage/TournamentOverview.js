@@ -2,9 +2,7 @@ import React from "react";
 import styled, { css } from "styled-components";
 import { groupBy, sortBy, zip } from "lodash-es";
 
-import Modal from "./Modal";
-import MatchForm from "./MatchForm";
-import backend from "../services/backend";
+import { getMatchTitle, getPlayerName } from "../../utils/tournamentUtils";
 
 const Container = styled.div`
   display: flex;
@@ -68,38 +66,12 @@ const PlayerScore = styled.div`
   padding: 0.33rem 0;
 `;
 
-export default class Tournament extends React.PureComponent {
-  state = {
-    openMatch: null
-  };
-
-  getMatchTitle = id => `Round ${id.r}, Match ${id.m}`;
-
+export default class TournamentOverview extends React.PureComponent {
   getMatchesByRound = () =>
     sortBy(
       Object.entries(groupBy(this.props.tournamentState.matches, match => match.id.r)),
       ([k, v]) => k
     ).map(([k, v]) => v);
-
-  getPlayerName = id => (id === 0 ? "?" : this.props.tournamentState.playerNames[id - 1]);
-
-  getOpenMatch = () =>
-    this.props.tournamentState.matches.find(match => match.id === this.state.openMatchId);
-
-  handleMatchClick = matchId => {
-    this.setState({ openMatchId: matchId });
-  };
-
-  handleCloseMatchModal = () => {
-    this.setState({ openMatchId: null });
-  };
-
-  handleSubmitScores = scores => {
-    backend
-      .submitScores(this.props.id, this.state.openMatchId, scores)
-      .then(() => this.setState({ openMatchId: null }))
-      .catch(e => alert(e.response.data));
-  };
 
   getPlayersAndScores = match => {
     if (!match.m) {
@@ -111,20 +83,22 @@ export default class Tournament extends React.PureComponent {
   };
 
   render() {
-    const { tournamentState: { playerNames, advancers } } = this.props;
-    const openMatch = this.getOpenMatch();
+    const { tournamentState } = this.props;
 
     return (
       <Container>
         {this.getMatchesByRound().map(matches => (
           <Matches>
             {matches.map((match, i) => (
-              <Match onClick={() => this.handleMatchClick(match.id)} key={i}>
-                <MatchTitle>{this.getMatchTitle(match.id)}</MatchTitle>
+              <Match onClick={() => this.props.onMatchClick(match.id)} key={i}>
+                <MatchTitle>{getMatchTitle(match)}</MatchTitle>
                 <Players>
                   {this.getPlayersAndScores(match).map(([player, score], i) => (
-                    <Player key={i} lastAdvancingPlayer={i === advancers[match.id.r - 1] - 1}>
-                      <PlayerName>{this.getPlayerName(player)}</PlayerName>
+                    <Player
+                      key={i}
+                      lastAdvancingPlayer={i === tournamentState.advancers[match.id.r - 1] - 1}
+                    >
+                      <PlayerName>{getPlayerName(player, tournamentState)}</PlayerName>
                       <PlayerScore>{score}</PlayerScore>
                     </Player>
                   ))}
@@ -133,20 +107,6 @@ export default class Tournament extends React.PureComponent {
             ))}
           </Matches>
         ))}
-
-        <Modal
-          isOpen={!!openMatch}
-          onRequestClose={this.handleCloseMatchModal}
-          contentLabel="Match"
-        >
-          {openMatch && (
-            <MatchForm
-              match={openMatch}
-              playerNames={playerNames}
-              onSubmitScores={this.handleSubmitScores}
-            />
-          )}
-        </Modal>
       </Container>
     );
   }
