@@ -11,5 +11,9 @@ export default {
       .then(response => response.data);
   },
 
+  getTournaments() {
+    return backend.get("/tournaments").then(response => response.data);
+  },
+
   websocketUrl: process.env.REACT_APP_WS_BACKEND || "ws://localhost:8080"
 };

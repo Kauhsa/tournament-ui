@@ -8,7 +8,7 @@ import { broadcastTournamentState } from "./service/broadcast";
 const router = createPromiseRouter();
 
 router.post("/tournaments", async (req, res) => {
-  const { players, sizes, advancers } = req.body;
+  const { players, sizes, advancers, name } = req.body;
   const options = { sizes, advancers };
   const invalidReason = FFA.invalid(players.length, options);
 
@@ -20,6 +20,7 @@ router.post("/tournaments", async (req, res) => {
   const ffaTournament = new FFA(players.length, options);
 
   const tournament = await Tournament.create({
+    name: name,
     players: players,
     options: options,
     states: [ffaTournament.state.slice()]
@@ -28,6 +29,10 @@ router.post("/tournaments", async (req, res) => {
   res.json({
     id: tournament.id
   });
+});
+
+router.get("/tournaments", async (req, res) => {
+  res.json((await Tournament.find()).map(t => t.dto()));
 });
 
 router.post("/tournaments/:id/scores", async (req, res) => {
