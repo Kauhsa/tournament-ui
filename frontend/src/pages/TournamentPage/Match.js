@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import { set } from "immutable";
 
+import SongVoting from "./SongVoting";
 import backend from "../../services/backend";
 import { getMatchTitle, getPlayerName } from "../../utils/tournamentUtils";
 import * as MatchStates from "../../utils/matchStates";
@@ -41,7 +41,7 @@ export default class Match extends React.PureComponent {
   };*/
 
   renderMatch = () => {
-    if (this.props.match.data.state === MatchStates.MATCH_NOT_STARTED) {
+    if (this.props.match.state === MatchStates.MATCH_NOT_STARTED) {
       return (
         <NewMatch
           match={this.props.match}
@@ -50,7 +50,7 @@ export default class Match extends React.PureComponent {
         />
       );
     } else {
-      return <p>lol</p>;
+      return <SongVoting match={this.props.match} tournamentState={this.props.tournamentState} />;
     }
   };
 

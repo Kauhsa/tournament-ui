@@ -15,6 +15,10 @@ export default {
     return backend.post(`/tournaments/${tournamentId}/matches/${matchId}/startSongSelection`);
   },
 
+  addSongVote(tournamentId, matchId, vote) {
+    return backend.post(`/tournaments/${tournamentId}/matches/${matchId}/votes`, vote);
+  },
+
   createTournament(data) {
     return backend.post("/tournaments", data).then(response => response.data);
   },

@@ -3,7 +3,6 @@ import React from "react";
 import Modal from "../../components/Modal";
 import Match from "./Match";
 import TournamentOverview from "./TournamentOverview";
-import backend from "../../services/backend";
 
 export default class Tournament extends React.PureComponent {
   state = {
