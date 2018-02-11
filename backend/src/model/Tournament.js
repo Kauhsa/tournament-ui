@@ -11,6 +11,7 @@ const tournamentSchema = mongoose.Schema({
 });
 
 tournamentSchema.method("dto", function() {
+  // eslint-disable-next-line no-unused-vars
   const { _id, __v, ...rest } = this.toObject();
   return { ...rest, id: _id };
 });

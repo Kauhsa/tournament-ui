@@ -22,6 +22,7 @@ class TournamentPage extends React.PureComponent {
             </li>
           ))}
         </ul>
+        <Link to={`/tournaments/new`}>Create new...</Link>
       </div>
     );
   }

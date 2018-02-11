@@ -11,6 +11,10 @@ export default {
       .then(response => response.data);
   },
 
+  createTournament(data) {
+    return backend.post("/tournaments", data).then(response => response.data);
+  },
+
   getTournaments() {
     return backend.get("/tournaments").then(response => response.data);
   },
