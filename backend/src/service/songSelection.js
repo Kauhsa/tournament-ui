@@ -1,6 +1,6 @@
 import faker from "faker";
 import uuid from "uuid";
-import { times, sample, uniq, random, shuffle, find, findLast, some } from "lodash";
+import { times, sample, uniq, random, shuffle, find, findLast, some, flatMap } from "lodash";
 import { saveTournament, restoreTournament } from "./tournament";
 
 import Tournament from "../model/Tournament";
@@ -33,6 +33,53 @@ const getInitialSongPool = allSongs => {
   });
 
   return shuffle(songs);
+};
+
+const getRandomizedSongs = (songs, votes) => {
+  // every player gets two votes, so this should be the amount of players
+  const initialPoints = votes.length / 2;
+
+  let songsWithWeights = songs.map(song => {
+    const upvotes = votes.filter(
+      vote => vote.songId === song.id && vote.type === SongVoteType.UPVOTE
+    ).length;
+
+    const downvotes = votes.filter(
+      vote => vote.songId === song.id && vote.type === SongVoteType.DOWNVOTE
+    ).length;
+
+    return { song: song, weight: initialPoints + upvotes - downvotes };
+  });
+
+  const randomisedSongs = [];
+
+  times(songsWithWeights.length, () => {
+    const songWithMaxWeight = songsWithWeights.find(
+      songWithWeight => songWithWeight.weight === initialPoints * 2
+    );
+
+    const songWithNoWeight = songsWithWeights.find(songWithWeight => songWithWeight.weight === 0);
+
+    const pool = flatMap(songsWithWeights, songWithWeight =>
+      times(songWithWeight.weight, () => songWithWeight.song)
+    );
+
+    let nextSong;
+    if (songWithMaxWeight) {
+      nextSong = songWithMaxWeight.song;
+    } else if (pool.length > 0) {
+      nextSong = sample(pool);
+    } else {
+      nextSong = songWithNoWeight.song;
+    }
+
+    randomisedSongs.push(nextSong);
+    songsWithWeights = songsWithWeights.filter(
+      songWithWeight => songWithWeight.song.id !== nextSong.id
+    );
+  });
+
+  return randomisedSongs;
 };
 
 export const getNextInSongSelection = match => {
@@ -71,8 +118,26 @@ export const startSongSelection = async (tournamentId, matchId) => {
 
   if (match.data.state === MatchStates.MATCH_NOT_STARTED) {
     match.data.state = MatchStates.MATCH_IN_SONG_SELECTION;
-    match.data.songs = getInitialSongPool(SONGS);
+    match.data.initialSongPool = getInitialSongPool(SONGS);
     match.data.votes = [];
+    await saveTournament(tournamentId, ffaTournament);
+  } else {
+    throw new Error("Invalid state nub");
+  }
+};
+
+export const endSongSelection = async (tournamentId, matchId) => {
+  const tournament = await Tournament.findById(tournamentId);
+  const ffaTournament = restoreTournament(tournament);
+  const match = ffaTournament.findMatch(deserializeMatchId(matchId));
+
+  if (
+    match.data.state === MatchStates.MATCH_IN_SONG_SELECTION &&
+    getNextInSongSelection(match) === null
+  ) {
+    match.data.matchSongs = getRandomizedSongs(match.data.initialSongPool, match.data.votes);
+    match.data.state = MatchStates.MATCH_IN_SCORE_ENTRY;
+    match.data.intermediateScores = match.p.map(() => 0);
     await saveTournament(tournamentId, ffaTournament);
   } else {
     throw new Error("Invalid state nub");

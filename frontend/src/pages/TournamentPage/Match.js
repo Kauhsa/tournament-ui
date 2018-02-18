@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 import SongVoting from "./SongVoting";
+import Scoring from "./Scoring";
 import backend from "../../services/backend";
 import { getMatchTitle, getPlayerName } from "../../utils/tournamentUtils";
 import * as MatchStates from "../../utils/matchStates";
@@ -41,7 +42,9 @@ export default class Match extends React.PureComponent {
   };*/
 
   renderMatch = () => {
-    if (this.props.match.state === MatchStates.MATCH_NOT_STARTED) {
+    const matchState = this.props.match.state;
+
+    if (matchState === MatchStates.MATCH_NOT_STARTED) {
       return (
         <NewMatch
           match={this.props.match}
@@ -49,8 +52,10 @@ export default class Match extends React.PureComponent {
           onStartSongSelection={this.handleStartSongSelection}
         />
       );
-    } else {
+    } else if (matchState === MatchStates.MATCH_IN_SONG_SELECTION) {
       return <SongVoting match={this.props.match} tournamentState={this.props.tournamentState} />;
+    } else {
+      return <Scoring match={this.props.match} tournamentState={this.props.tournamentState} />;
     }
   };
 

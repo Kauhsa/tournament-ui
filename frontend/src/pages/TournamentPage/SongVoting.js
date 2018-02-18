@@ -26,14 +26,14 @@ const Votes = styled.div`
 
 class Song extends React.PureComponent {
   render() {
-    const { song, voteType, votes, tournamentState } = this.props;
+    const { song, nextSongVote, votes, tournamentState } = this.props;
     const downvotes = votes.filter(vote => vote.type === SongVoteType.DOWNVOTE);
     const upvotes = votes.filter(vote => vote.type === SongVoteType.UPVOTE);
 
     return (
       <div>
         <SongHeader>
-          <VoteButton onClick={this.props.onVote}>{voteType}</VoteButton>
+          {nextSongVote && <VoteButton onClick={this.props.onVote}>{nextSongVote.type}</VoteButton>}
           {song.rating} – {song.name}
         </SongHeader>
         <Votes>
@@ -51,37 +51,41 @@ class Song extends React.PureComponent {
 }
 
 export default class SongVoting extends React.PureComponent {
-  handleVote(vote, songId) {
+  handleVote = (vote, songId) => {
     backend.addSongVote(this.props.tournamentState.id, this.props.match.id, {
       type: vote.type,
       playerId: vote.playerId,
       songId: songId
     });
-  }
+  };
+
+  handleEndSongSelection = () => {
+    backend.endSongSelection(this.props.tournamentState.id, this.props.match.id);
+  };
 
   render() {
     const { match, tournamentState } = this.props;
     const { nextSongVote } = match;
 
-    if (!nextSongVote) {
-      return <p>WUT THIS STATE</p>;
-    }
-
     return (
       <div>
-        <NextSongVote>
-          Next up: {nextSongVote.type} from {getPlayerName(nextSongVote.playerId, tournamentState)}
-        </NextSongVote>
-        {match.songs.map(song => (
+        {nextSongVote && (
+          <NextSongVote>
+            Next up: {nextSongVote.type} from{" "}
+            {getPlayerName(nextSongVote.playerId, tournamentState)}
+          </NextSongVote>
+        )}
+        {match.initialSongPool.map(song => (
           <Song
             key={song.id}
             tournamentState={tournamentState}
             song={song}
             votes={match.votes.filter(vote => vote.songId === song.id)}
-            voteType={nextSongVote.type}
+            nextSongVote={nextSongVote}
             onVote={() => this.handleVote(nextSongVote, song.id)}
           />
         ))}
+        {!nextSongVote && <button onClick={this.handleEndSongSelection}>End song selection</button>}
       </div>
     );
   }
