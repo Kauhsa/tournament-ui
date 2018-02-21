@@ -35,12 +35,6 @@ export default class Match extends React.PureComponent {
     backend.startSongSelection(tournamentState.id, match.id);
   };
 
-  /*handleSubmitScores = scores => {
-    backend
-      .submitScores(this.props.id, this.state.openMatchId, scores)
-      .catch(e => alert(e.response.data));
-  };*/
-
   renderMatch = () => {
     const matchState = this.props.match.state;
 
@@ -54,8 +48,10 @@ export default class Match extends React.PureComponent {
       );
     } else if (matchState === MatchStates.MATCH_IN_SONG_SELECTION) {
       return <SongVoting match={this.props.match} tournamentState={this.props.tournamentState} />;
-    } else {
+    } else if (matchState === MatchStates.MATCH_IN_SCORE_ENTRY) {
       return <Scoring match={this.props.match} tournamentState={this.props.tournamentState} />;
+    } else {
+      return <h1>LOL VALMIS</h1>;
     }
   };
 

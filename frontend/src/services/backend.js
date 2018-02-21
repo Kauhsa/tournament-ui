@@ -5,10 +5,12 @@ const backend = axios.create({
 });
 
 export default {
-  submitScores(tournamentId, matchId, scores) {
-    return backend
-      .post(`/tournaments/${tournamentId}/scores`, { id: matchId, score: scores })
-      .then(response => response.data);
+  updateScores(tournamentId, matchId, scores) {
+    return backend.post(`/tournaments/${tournamentId}/matches/${matchId}/scores`, scores);
+  },
+
+  endMatch(tournamentId, matchId, scores) {
+    return backend.post(`/tournaments/${tournamentId}/matches/${matchId}/endMatch`);
   },
 
   startSongSelection(tournamentId, matchId) {

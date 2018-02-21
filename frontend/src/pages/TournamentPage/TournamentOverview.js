@@ -75,11 +75,7 @@ export default class TournamentOverview extends React.PureComponent {
   };
 
   getPlayersAndScores = match => {
-    if (!match.m) {
-      return match.p.map(p => [p, 0]);
-    }
-
-    const zipped = zip(match.p, match.m);
+    const zipped = zip(match.p, match.scores);
     return sortBy(zipped, ([player, score]) => -score);
   };
 

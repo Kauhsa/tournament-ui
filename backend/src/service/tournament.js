@@ -57,29 +57,49 @@ export const getTournaments = async () => {
   return (await Tournament.find()).map(t => t.dto());
 };
 
-export const addScore = async (tournamentId, matchId, score) => {
+export const updateScore = async (tournamentId, matchId, score) => {
+  const tournament = await Tournament.findById(tournamentId);
+  const ffaTournament = restoreTournament(tournament);
+  const match = ffaTournament.findMatch(deserializeMatchId(matchId));
+
+  if (match.data.state === MatchStates.MATCH_IN_SCORE_ENTRY && score.length === match.p.length) {
+    match.data.intermediateScores = score;
+    await saveTournament(tournamentId, ffaTournament);
+  } else {
+    throw new Error("Invalid state nub");
+  }
+};
+
+export const endMatch = async (tournamentId, matchId) => {
   const tournament = await Tournament.findById(tournamentId);
   const ffaTournament = restoreTournament(tournament);
   const deserializedMatchId = deserializeMatchId(matchId);
+  const match = ffaTournament.findMatch(deserializedMatchId);
 
-  const reason = ffaTournament.unscorable(deserializedMatchId, score);
-  if (reason !== null) {
-    throw new Error(reason);
+  if (match.data.state === MatchStates.MATCH_IN_SCORE_ENTRY) {
+    const reason = ffaTournament.unscorable(deserializedMatchId, match.data.intermediateScores);
+
+    if (reason !== null) {
+      throw new Error(reason);
+    }
+
+    match.data.state = MatchStates.MATCH_SCORED;
+    await saveTournament(tournamentId, ffaTournament);
+  } else {
+    throw new Error("Invalid state nub");
   }
-
-  ffaTournament.score(deserializedMatchId, score);
-  await saveTournament(tournamentId, ffaTournament);
 };
 
 const serializeMatch = match => {
-  const { id, data, ...rest } = match;
+  const { id, data, m, ...rest } = match;
 
   let matchObject = {
     ...rest,
     ...data,
     id: serializeMatchId(id),
     roundNumber: match.id.r,
-    matchNumber: match.id.m
+    matchNumber: match.id.m,
+    scores: match.data.intermediateScores || match.p.map(() => 0)
   };
 
   if (match.data.state === MatchStates.MATCH_IN_SONG_SELECTION) {
