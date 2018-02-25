@@ -16,7 +16,7 @@ const getInitialSongPool = allSongs => {
 
   const getPossibleSongs = () =>
     allSongs
-      .map(song => ({ title: song.title, rating: song.rating, id: song._id }))
+      .map(song => ({ title: song.title, rating: song.rating, id: song._id.toString() }))
       .filter(song => !songs.some(s => s.id === song.id));
 
   const getPossibleRatings = () => uniq(getPossibleSongs().map(song => song.rating));
@@ -55,7 +55,9 @@ const getRandomizedSongs = (songs, votes) => {
       songWithWeight => songWithWeight.weight === initialPoints * 2
     );
 
-    const songWithNoWeight = songsWithWeights.find(songWithWeight => songWithWeight.weight === 0);
+    const songsWithNoWeight = songsWithWeights.filter(
+      songWithWeight => songWithWeight.weight === 0
+    );
 
     const pool = flatMap(songsWithWeights, songWithWeight =>
       times(songWithWeight.weight, () => songWithWeight.song)
@@ -67,7 +69,7 @@ const getRandomizedSongs = (songs, votes) => {
     } else if (pool.length > 0) {
       nextSong = sample(pool);
     } else {
-      nextSong = songWithNoWeight.song;
+      nextSong = songsWithNoWeight[0].song;
     }
 
     randomisedSongs.push(nextSong);

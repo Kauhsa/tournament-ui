@@ -1,5 +1,4 @@
 import FFA from "ffa";
-import uuid from "uuid";
 
 import { getNextInSongSelection } from "./songSelection";
 import Tournament from "../model/Tournament";
