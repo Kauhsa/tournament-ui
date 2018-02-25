@@ -38,7 +38,6 @@ const PlayerForm = withFormik({
     scores: yup.array(yup.number())
   })
 })(({ match, tournamentState, handleSubmit, isSubmitting, values, onUpdate, onEnd, isValid }) => {
-  console.log(values);
   return (
     <div>
       <form onSubmit={handleSubmit}>
@@ -89,7 +88,7 @@ export default class Scoring extends React.PureComponent {
     return (
       <div>
         <Scores>
-          <ol>{match.matchSongs.map((song, i) => <li key={i}>{song.name}</li>)}</ol>
+          <ol>{match.matchSongs.map((song, i) => <li key={i}>{song.title}</li>)}</ol>
         </Scores>
 
         <PlayerForm

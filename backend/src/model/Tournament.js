@@ -13,7 +13,13 @@ const tournamentSchema = mongoose.Schema({
     sizes: [Number],
     advancers: [Number]
   },
-  activeMatchId: Object
+  activeMatchId: Object,
+  songs: [
+    {
+      rating: Number,
+      title: String
+    }
+  ]
 });
 
 tournamentSchema.method("dto", function() {

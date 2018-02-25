@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "axios": "^0.17.1",
+    "common-tags": "^1.7.2",
     "css-wipe": "^4.3.0",
     "express-promise-router": "^3.0.1",
     "formik": "^0.11.11",

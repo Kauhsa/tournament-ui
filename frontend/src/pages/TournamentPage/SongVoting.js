@@ -34,7 +34,7 @@ class Song extends React.PureComponent {
       <div>
         <SongHeader>
           {nextSongVote && <VoteButton onClick={this.props.onVote}>{nextSongVote.type}</VoteButton>}
-          {song.rating} – {song.name}
+          {song.rating} – {song.title}
         </SongHeader>
         <Votes>
           <p>

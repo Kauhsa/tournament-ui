@@ -1,18 +1,10 @@
-import faker from "faker";
-import uuid from "uuid";
-import { times, sample, uniq, random, shuffle, find, findLast, some, flatMap } from "lodash";
+import { times, sample, uniq, shuffle, find, findLast, some, flatMap } from "lodash";
 import { saveTournament, restoreTournament } from "./tournament";
 
 import Tournament from "../model/Tournament";
 import * as MatchStates from "../utils/matchStates";
 import * as SongVoteType from "../utils/songVoteType";
 import { deserializeMatchId } from "../utils/tournamentUtils";
-
-const SONGS = times(10, () => ({
-  id: uuid.v4(),
-  name: faker.commerce.productName(),
-  rating: random(9, 12)
-}));
 
 const getRandomSongByRating = (rating, songs) => {
   const pool = songs.filter(song => song.rating === rating);
@@ -21,7 +13,12 @@ const getRandomSongByRating = (rating, songs) => {
 
 const getInitialSongPool = allSongs => {
   const songs = [];
-  const getPossibleSongs = () => allSongs.filter(song => !songs.some(s => s.id === song.id));
+
+  const getPossibleSongs = () =>
+    allSongs
+      .map(song => ({ title: song.title, rating: song.rating, id: song._id }))
+      .filter(song => !songs.some(s => s.id === song.id));
+
   const getPossibleRatings = () => uniq(getPossibleSongs().map(song => song.rating));
 
   getPossibleRatings().forEach(rating => {
@@ -118,7 +115,7 @@ export const startSongSelection = async (tournamentId, matchId) => {
 
   if (match.data.state === MatchStates.MATCH_NOT_STARTED) {
     match.data.state = MatchStates.MATCH_IN_SONG_SELECTION;
-    match.data.initialSongPool = getInitialSongPool(SONGS);
+    match.data.initialSongPool = getInitialSongPool(tournament.songs);
     match.data.votes = [];
     await saveTournament(tournamentId, ffaTournament);
   } else {

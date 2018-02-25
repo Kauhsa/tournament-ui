@@ -1,4 +1,5 @@
 import FFA from "ffa";
+import uuid from "uuid";
 
 import { getNextInSongSelection } from "./songSelection";
 import Tournament from "../model/Tournament";
@@ -25,7 +26,7 @@ export const restoreTournament = tournament => {
   );
 };
 
-export const createTournament = async ({ name, players, sizes, advancers }) => {
+export const createTournament = async ({ name, players, sizes, advancers, songs }) => {
   const options = { sizes, advancers };
   const invalidReason = FFA.invalid(players.length, options);
 
@@ -43,9 +44,10 @@ export const createTournament = async ({ name, players, sizes, advancers }) => {
   );
 
   const tournament = await Tournament.create({
-    name: name,
-    players: players,
-    options: options,
+    name,
+    players,
+    options,
+    songs,
     states: [{ state: ffaTournament.state.slice(), metadata: ffaTournament.metadata() }],
     activeMatchId: { lul: "lol" } // TODO kinda
   });
@@ -91,7 +93,7 @@ export const endMatch = async (tournamentId, matchId) => {
 };
 
 const serializeMatch = match => {
-  const { id, data, m, ...rest } = match;
+  const { id, data, ...rest } = match;
 
   let matchObject = {
     ...rest,

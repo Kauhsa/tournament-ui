@@ -13,8 +13,8 @@ router.get("/tournaments", async (req, res) => {
 
 router.post("/tournaments", async (req, res) => {
   try {
-    const { players, sizes, advancers, name } = req.body;
-    const tournament = await createTournament({ players, sizes, advancers, name });
+    const { players, sizes, advancers, name, songs } = req.body;
+    const tournament = await createTournament({ players, sizes, advancers, name, songs });
     res.json({
       id: tournament.id
     });
