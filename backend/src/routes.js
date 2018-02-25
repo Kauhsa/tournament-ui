@@ -1,7 +1,12 @@
 import createPromiseRouter from "express-promise-router";
 
 import { getTournaments, createTournament, updateScore, endMatch } from "./service/tournament";
-import { startSongSelection, endSongSelection, addSongVote } from "./service/songSelection";
+import {
+  startSongSelection,
+  resetSongSelection,
+  endSongSelection,
+  addSongVote
+} from "./service/songSelection";
 
 import { broadcastTournamentState } from "./service/broadcast";
 
@@ -54,6 +59,18 @@ router.post("/tournaments/:tournamentId/matches/:matchId/startSongSelection", as
   try {
     const { tournamentId, matchId } = req.params;
     await startSongSelection(tournamentId, matchId);
+    await broadcastTournamentState(tournamentId);
+    res.sendStatus(200);
+  } catch (e) {
+    console.error(e);
+    res.status(400).send(e.message);
+  }
+});
+
+router.post("/tournaments/:tournamentId/matches/:matchId/resetSongSelection", async (req, res) => {
+  try {
+    const { tournamentId, matchId } = req.params;
+    await resetSongSelection(tournamentId, matchId);
     await broadcastTournamentState(tournamentId);
     res.sendStatus(200);
   } catch (e) {

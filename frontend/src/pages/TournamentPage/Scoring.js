@@ -11,8 +11,6 @@ const Scores = styled.div`
   margin-bottom: 1rem;
 `;
 
-const Players = styled.div``;
-
 const Player = styled.div`
   margin-bottom: 1rem;
 `;
@@ -20,8 +18,6 @@ const Player = styled.div`
 const PlayerTitle = styled.div`
   font-weight: bold;
 `;
-
-const PlayerScore = styled.input``;
 
 const Button = styled.button`
   margin-right: 1rem;
@@ -72,14 +68,16 @@ export default class Scoring extends React.PureComponent {
     );
 
   handleEnd = scores => {
-    backend
-      .updateScores(
-        this.props.tournamentState.id,
-        this.props.match.id,
-        scores.map(s => parseInt(s, 10))
-      )
-      .then(() => backend.endMatch(this.props.tournamentState.id, this.props.match.id))
-      .catch(e => e.response && alert(e.response.data));
+    if (window.confirm("YOU SURE? Can't undo this!")) {
+      backend
+        .updateScores(
+          this.props.tournamentState.id,
+          this.props.match.id,
+          scores.map(s => parseInt(s, 10))
+        )
+        .then(() => backend.endMatch(this.props.tournamentState.id, this.props.match.id))
+        .catch(e => e.response && alert(e.response.data));
+    }
   };
 
   render() {

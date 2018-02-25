@@ -63,6 +63,10 @@ export default class SongVoting extends React.PureComponent {
     backend.endSongSelection(this.props.tournamentState.id, this.props.match.id);
   };
 
+  handleReset = () => {
+    backend.resetSongSelection(this.props.tournamentState.id, this.props.match.id);
+  };
+
   render() {
     const { match, tournamentState } = this.props;
     const { nextSongVote } = match;
@@ -85,7 +89,9 @@ export default class SongVoting extends React.PureComponent {
             onVote={() => this.handleVote(nextSongVote, song.id)}
           />
         ))}
+
         {!nextSongVote && <button onClick={this.handleEndSongSelection}>End song selection</button>}
+        <button onClick={this.handleReset}>Reset</button>
       </div>
     );
   }

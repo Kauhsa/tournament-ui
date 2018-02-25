@@ -125,6 +125,20 @@ export const startSongSelection = async (tournamentId, matchId) => {
   }
 };
 
+export const resetSongSelection = async (tournamentId, matchId) => {
+  const tournament = await Tournament.findById(tournamentId);
+  const ffaTournament = restoreTournament(tournament);
+
+  const match = ffaTournament.findMatch(deserializeMatchId(matchId));
+
+  if (match.data.state === MatchStates.MATCH_IN_SONG_SELECTION) {
+    match.data.votes = [];
+    await saveTournament(tournamentId, ffaTournament);
+  } else {
+    throw new Error("Invalid state nub");
+  }
+};
+
 export const endSongSelection = async (tournamentId, matchId) => {
   const tournament = await Tournament.findById(tournamentId);
   const ffaTournament = restoreTournament(tournament);

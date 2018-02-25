@@ -21,6 +21,10 @@ export default {
     return backend.post(`/tournaments/${tournamentId}/matches/${matchId}/votes`, vote);
   },
 
+  resetSongSelection(tournamentId, matchId) {
+    return backend.post(`/tournaments/${tournamentId}/matches/${matchId}/resetSongSelection`);
+  },
+
   endSongSelection(tournamentId, matchId) {
     return backend.post(`/tournaments/${tournamentId}/matches/${matchId}/endSongSelection`);
   },
