@@ -32,7 +32,7 @@ wss.on("connection", async (ws, req) => {
 
 app.use(routes);
 
-server.listen(process.env.PORT || 8080, function listening() {
+server.listen(process.env.PORT || 8080, process.env.HOST || "0.0.0.0", function listening() {
   // eslint-disable-next-line no-console
-  console.log("Listening on %d", server.address().port);
+  console.log("Listening on %s:%s", server.address().address, server.address().port);
 });
