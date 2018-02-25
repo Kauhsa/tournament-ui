@@ -85,6 +85,7 @@ export const endMatch = async (tournamentId, matchId) => {
       throw new Error(reason);
     }
 
+    ffaTournament.score(deserializedMatchId, match.data.intermediateScores);
     match.data.state = MatchStates.MATCH_SCORED;
     await saveTournament(tournamentId, ffaTournament);
   } else {
