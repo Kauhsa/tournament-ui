@@ -60,7 +60,9 @@ export default class SongVoting extends React.PureComponent {
   };
 
   handleEndSongSelection = () => {
-    backend.endSongSelection(this.props.tournamentState.id, this.props.match.id);
+    if (window.confirm("YOU SURE? Can't undo this!")) {
+      backend.endSongSelection(this.props.tournamentState.id, this.props.match.id);
+    }
   };
 
   handleReset = () => {
