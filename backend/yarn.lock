@@ -1488,9 +1488,9 @@ fast-levenshtein@~2.0.4:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz#3d8a5c66883a16a30ca8643e851f19baa7797917"
 
-ffa@^3.2.0:
+"ffa@https://github.com/kauhsa/ffa#fix-unambiguous":
   version "3.2.0"
-  resolved "https://registry.yarnpkg.com/ffa/-/ffa-3.2.0.tgz#8580d136999149fdbc500550d07b8b1a75e8f365"
+  resolved "https://github.com/kauhsa/ffa#948bfec6b82722ea97dff8fa488a574317f60fc3"
   dependencies:
     group "^1.0.0"
     interlude "^1.1.0"

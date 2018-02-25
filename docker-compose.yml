@@ -18,7 +18,7 @@ services:
       MONGO_URL: 'mongodb://mongo/tournament'
     ports:
       - '8080:8080'
-    command: "ash -c 'cd /app && yarn && yarn start'"
+    command: "ash -c 'cd /app && apk add --no-cache git && yarn && yarn start'"
 
   mongo:
     image: mongo
