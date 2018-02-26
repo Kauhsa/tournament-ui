@@ -1,8 +1,14 @@
 import React from "react";
+import styled from "styled-components";
 
 import Modal from "../../components/Modal";
 import Match from "./Match";
 import TournamentOverview from "./TournamentOverview";
+
+const Container = styled.div`
+  height: 100%;
+  width: 100%;
+`;
 
 export default class Tournament extends React.PureComponent {
   state = {
@@ -25,7 +31,7 @@ export default class Tournament extends React.PureComponent {
     const openMatch = this.getOpenMatch();
 
     return (
-      <div>
+      <Container>
         <TournamentOverview
           tournamentState={tournamentState}
           onMatchClick={this.handleMatchClick}
@@ -37,7 +43,7 @@ export default class Tournament extends React.PureComponent {
         >
           {openMatch && <Match match={openMatch} tournamentState={tournamentState} />}
         </Modal>
-      </div>
+      </Container>
     );
   }
 }
