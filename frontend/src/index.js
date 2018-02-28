@@ -11,9 +11,9 @@ import NewTournamentPage from "./pages/NewTournamentPage";
 const Routes = () => (
   <BrowserRouter>
     <Switch>
-      <Route exact path="/tournaments/new" component={NewTournamentPage} />
-      <Route exact path="/tournaments/:tournamentId" component={TournamentPage} />
-      <Route exact path="/tournaments/" component={TournamentsPage} />
+      <Route path="/tournaments/new" component={NewTournamentPage} />
+      <Route path="/tournaments/:tournamentId" component={TournamentPage} />
+      <Route path="/tournaments" component={TournamentsPage} />
       <Redirect to="/tournaments" />
     </Switch>
   </BrowserRouter>

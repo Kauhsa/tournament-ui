@@ -28,7 +28,7 @@ class TournamentPage extends React.PureComponent {
     return (
       <Container>
         <Websocket url={url} onMessage={this.updateTournamentState} />
-        {tournamentState && <Tournament tournamentState={tournamentState} />}
+        {tournamentState && <Tournament match={match} tournamentState={tournamentState} />}
       </Container>
     );
   }
