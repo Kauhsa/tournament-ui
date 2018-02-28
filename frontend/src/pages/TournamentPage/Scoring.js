@@ -64,7 +64,7 @@ export default class Scoring extends React.PureComponent {
     backend.updateScores(
       this.props.tournamentState.id,
       this.props.match.id,
-      scores.map(s => parseInt(s, 10))
+      scores.map(s => parseFloat(s))
     );
 
   handleEnd = scores => {
@@ -73,7 +73,7 @@ export default class Scoring extends React.PureComponent {
         .updateScores(
           this.props.tournamentState.id,
           this.props.match.id,
-          scores.map(s => parseInt(s, 10))
+          scores.map(s => parseFloat(s))
         )
         .then(() => backend.endMatch(this.props.tournamentState.id, this.props.match.id))
         .catch(e => e.response && alert(e.response.data));
