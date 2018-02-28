@@ -134,7 +134,7 @@ export default class TournamentOverview extends React.PureComponent {
       <Container>
         {this.getMatchesByRound().map((matches, round) => (
           <Round key={round}>
-            <RoundTitle>Round {round}</RoundTitle>
+            <RoundTitle>Round {round + 1}</RoundTitle>
             {matches.map((match, i) => (
               <Match onClick={() => this.props.onMatchClick(match.id)} key={i} state={match.state}>
                 <MatchTitle>Match {match.matchNumber}</MatchTitle>
