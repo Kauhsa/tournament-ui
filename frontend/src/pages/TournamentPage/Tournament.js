@@ -6,6 +6,7 @@ import Modal from "../../components/Modal";
 import Match from "./Match";
 import TournamentOverview from "./TournamentOverview";
 import CurrentSongSelection from "./CurrentSongSelection";
+import CurrentPoints from "./CurrentPoints";
 
 const Container = styled.div`
   height: 100%;
@@ -37,6 +38,9 @@ export default class Tournament extends React.PureComponent {
         <Switch>
           <Route path={`${match.url}/currentSongSelection`}>
             <CurrentSongSelection tournamentState={tournamentState} />
+          </Route>
+          <Route path={`${match.url}/currentPoints`}>
+            <CurrentPoints tournamentState={tournamentState} />
           </Route>
           <Route>
             <Fragment>

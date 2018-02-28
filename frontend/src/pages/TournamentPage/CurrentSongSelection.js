@@ -140,7 +140,7 @@ export default class CurrentMatch extends React.PureComponent {
     const currentMatch = this.getCurrentMatch();
 
     if (!currentMatch) {
-      return null;
+      return <Container />;
     }
 
     return (

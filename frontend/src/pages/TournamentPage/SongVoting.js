@@ -26,14 +26,18 @@ const Votes = styled.div`
 
 class Song extends React.PureComponent {
   render() {
-    const { song, nextSongVote, votes, tournamentState } = this.props;
+    const { song, nextSongVote, votes, tournamentState, disabled } = this.props;
     const downvotes = votes.filter(vote => vote.type === SongVoteType.DOWNVOTE);
     const upvotes = votes.filter(vote => vote.type === SongVoteType.UPVOTE);
 
     return (
       <div>
         <SongHeader>
-          {nextSongVote && <VoteButton onClick={this.props.onVote}>{nextSongVote.type}</VoteButton>}
+          {nextSongVote && (
+            <VoteButton disabled={disabled} onClick={this.props.onVote}>
+              {nextSongVote.type}
+            </VoteButton>
+          )}
           {song.rating} – {song.title}
         </SongHeader>
         <Votes>
@@ -51,12 +55,21 @@ class Song extends React.PureComponent {
 }
 
 export default class SongVoting extends React.PureComponent {
+  state = {
+    disabled: false
+  };
+
   handleVote = (vote, songId) => {
-    backend.addSongVote(this.props.tournamentState.id, this.props.match.id, {
-      type: vote.type,
-      playerId: vote.playerId,
-      songId: songId
-    });
+    this.setState({ disabled: true });
+
+    backend
+      .addSongVote(this.props.tournamentState.id, this.props.match.id, {
+        type: vote.type,
+        playerId: vote.playerId,
+        songId: songId
+      })
+      .then(() => this.setState({ disabled: false }))
+      .catch(() => this.setState({ disabled: false }));
   };
 
   handleEndSongSelection = () => {
@@ -86,6 +99,7 @@ export default class SongVoting extends React.PureComponent {
             key={song.id}
             tournamentState={tournamentState}
             song={song}
+            disabled={this.state.disabled}
             votes={match.votes.filter(vote => vote.songId === song.id)}
             nextSongVote={nextSongVote}
             onVote={() => this.handleVote(nextSongVote, song.id)}
